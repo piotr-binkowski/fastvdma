@@ -43,7 +43,7 @@ class WishboneClassicWriter(val addrWidth : Int, val dataWidth : Int) extends Mo
 
   val stbCnt = RegInit(0.U(addrWidth.W))
   val adr = RegInit(0.U(addrWidth.W))
-  val stb = WireInit(stbCnt =/= 0.U && valid)
+  val stb = RegInit(false.B)
   val cyc = WireInit(stb)
   val ack = WireInit(io.bus.ack_i)
 
@@ -78,6 +78,14 @@ class WishboneClassicWriter(val addrWidth : Int, val dataWidth : Int) extends Mo
         done := true.B
       }
     }
+  }
+
+  when(stbCnt =/= 0.U && valid){
+    stb := true.B
+  }
+
+  when(ready){
+    stb := false.B
   }
 
   when(stbCnt =/= 0.U && ready){
